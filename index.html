@@ -5,7 +5,7 @@
 <script>
 $(document).ready(function(){
     $("button").click(function(){
-        $.ajax({url: "http://52.62.60.197:4567/geo.json?planId=1&scenario=5", success: function(result){
+        $.ajax({url: "https://52.62.60.197:4567/geo.json?planId=1&scenario=5", success: function(result){
             $("#div1").html(result);
         }});
     });
