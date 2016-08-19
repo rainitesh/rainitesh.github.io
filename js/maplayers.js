@@ -677,7 +677,7 @@ $.ajax({
 var S5A_GEOJSON,ITBC_Design_S5A,ITB_Design_S5A,ITBCCS_Design_S5A,DTBC_Design_S5A,DTB_Design_S5A,RT_Design_S5A,RC_Design_S5A,RO_Design_S5A,CP_Design_S5A,CC_Design_S5A,C_Design_S5A,M_Design_S5A,ITBC_Construction_S5A,ITB_Construction_S5A,ITBCCS_Construction_S5A,DTBC_Construction_S5A,DTB_Construction_S5A,RT_Construction_S5A,RC_Construction_S5A,RO_Construction_S5A,CP_Construction_S5A,CC_Construction_S5A,C_Construction_S5A,M_Construction_S5A,ITBC_HandOver_S5A,ITB_HandOver_S5A,ITBCCS_HandOver_S5A,DTBC_HandOver_S5A,DTB_HandOver_S5A,RT_HandOver_S5A,RC_HandOver_S5A,RO_HandOver_S5A,CP_HandOver_S5A,CC_HandOver_S5A,C_HandOver_S5A,M_HandOver_S5A,A_S5A,T_S5A,TP_S5A,R_S5A;
 $.ajax({
 	//url: "http://localhost:9090/AklWebApp/test.geojson",
-	url: "http://52.62.60.197:4567/geo.json?planId=1&scenario=5",
+	url: "data/S5A.geojson",
 	async: false,
 	dataType: 'json',
 	success: function(data){
