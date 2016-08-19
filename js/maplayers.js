@@ -677,11 +677,13 @@ $.ajax({
 var S5A_GEOJSON,ITBC_Design_S5A,ITB_Design_S5A,ITBCCS_Design_S5A,DTBC_Design_S5A,DTB_Design_S5A,RT_Design_S5A,RC_Design_S5A,RO_Design_S5A,CP_Design_S5A,CC_Design_S5A,C_Design_S5A,M_Design_S5A,ITBC_Construction_S5A,ITB_Construction_S5A,ITBCCS_Construction_S5A,DTBC_Construction_S5A,DTB_Construction_S5A,RT_Construction_S5A,RC_Construction_S5A,RO_Construction_S5A,CP_Construction_S5A,CC_Construction_S5A,C_Construction_S5A,M_Construction_S5A,ITBC_HandOver_S5A,ITB_HandOver_S5A,ITBCCS_HandOver_S5A,DTBC_HandOver_S5A,DTB_HandOver_S5A,RT_HandOver_S5A,RC_HandOver_S5A,RO_HandOver_S5A,CP_HandOver_S5A,CC_HandOver_S5A,C_HandOver_S5A,M_HandOver_S5A,A_S5A,T_S5A,TP_S5A,R_S5A;
 $.ajax({
 	//url: "http://localhost:9090/AklWebApp/test.geojson",
-	url: "https://localhost:9090/AklWebApp/test.geojson",
+	url: "http://52.62.60.197:4567/geo.json?planId=1&scenario=5",
 	async: false,
 	dataType: 'json',
 	success: function(data){
+		console.log(data);
 		S5A_GEOJSON = data
+	
 		ITBC_Design_S5A = L.mapbox.featureLayer(data, {filter:function(feature, layer) {if(!!feature.properties.Design_Start_Date){return feature.properties.Package === "P1.1 ITB committed" && feature.properties.Design_Start_Date.substring(0,8) <= formatDate_fromGEOJSON(brush.extent()[0]);}},style:ITBC_Design_Style_S5A,smoothFactor:0});
 		ITB_Design_S5A = L.mapbox.featureLayer(data, {filter:function(feature, layer) {if(!!feature.properties.Design_Start_Date){return feature.properties.Package === "P1.3 ITB" && feature.properties.Design_Start_Date.substring(0,8) <= formatDate_fromGEOJSON(brush.extent()[0]);}},style:ITB_Design_Style_S5A,smoothFactor:0});
 		ITBCCS_Design_S5A = L.mapbox.featureLayer(data, {filter:function(feature, layer) {if(!!feature.properties.Design_Start_Date){return feature.properties.Package === "P1.2 ITB ccs" && feature.properties.Design_Start_Date.substring(0,8) <= formatDate_fromGEOJSON(brush.extent()[0]);}},style:ITBCCS_Design_Style_S5A,smoothFactor:0});
