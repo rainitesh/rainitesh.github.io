@@ -102,7 +102,6 @@ $.ajax({
     async: false,
     dataType: 'json',
     success: function( data ) {
-        console.log(data)
         FY16_GEOJSON = data;
         FY16 = L.geoJson(data, {style:FY16_Style,smoothFactor:0}).addTo(map);
     }
