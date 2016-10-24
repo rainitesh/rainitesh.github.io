@@ -1,46 +1,60 @@
 <html>
-<head>
-  <title>A Leaflet map!</title>
-  <link rel="stylesheet" href="leaflet.css"/>
-  <script src="leaflet.js"></script>
-  <!-- Jquery min -->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
-        html, body, #map {
-            height: 100%;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
+    <head>
+        <title>A Leaflet map!</title>
+        <link rel="stylesheet" href="leaflet.css"/>
+        <script src="leaflet.js"></script>
+        <!-- Jquery min -->
+        <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            html, body, #map {
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
 
-  <div id="map"></div>
+        <div id="map"></div>
 
-  <script>
-        var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        	{ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>' });  
-        var map = L.map('map', { scrollWheelZoom: false, center: [-37.813611, 144.963056], zoom: 14 });  
-        map.addLayer(layer);
+        <script>
+            var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+                    {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'});
+            var map = L.map('map', {scrollWheelZoom: false, center: [-37.813611, 144.963056], zoom: 14});
+            map.addLayer(layer);
 
-        // load GeoJSON from an external file
-    
-    $.getJSON("station.geojson",function(data){
-  var ratIcon = L.icon({
-    iconUrl: 'http://joshuafrazier.info/images/firefox.svg',
-    iconSize: [60,50]
-  });
-  L.geoJson(data,{
-    pointToLayer: function(feature,latlng){
-	  return L.marker(latlng,{icon: ratIcon});
-    }
-  }).addTo(map);
-});
-    
+            // load GeoJSON from an external file
+            $.getJSON("station.geojson", function (data) {
+                var ratIcon = L.icon({
+                    iconUrl: 'http://joshuafrazier.info/images/firefox.svg',
+                    iconSize: [60, 50]
+                });
 
-    </script>
-</body>
+                L.geoJson(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng, {
+                            clickable: false
+                        });
+                    },
+                    style: MelMetroRail_ExistingStations_Style
+                }).addTo(map);
+            });
+
+            function MelMetroRail_ExistingStations_Style(feature) {
+                return {
+                    weight: 2,
+                    radius: 6,
+                    opacity: 1,
+                    color: '#212121',
+                    fillColor: '#FFF',
+                    fillOpacity: 1
+                }
+            }
+
+
+        </script>
+    </body>
 </html>
