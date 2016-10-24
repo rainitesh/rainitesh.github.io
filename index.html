@@ -29,7 +29,7 @@
         // load GeoJSON from an external file
 
 
-      $.getJSON("stations.geojson",function(data){
+      $.getJSON("station.geojson",function(data){
         // add GeoJSON layer to the map once the file is loaded
         L.geoJson(data).addTo(map);
        });
