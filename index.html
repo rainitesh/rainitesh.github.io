@@ -27,12 +27,19 @@
         map.addLayer(layer);
 
         // load GeoJSON from an external file
-
-
-      $.getJSON("station.geojson",function(data){
-        // add GeoJSON layer to the map once the file is loaded
-        L.geoJson(data).addTo(map);
-       });
+    
+    $.getJSON("station.geojson",function(data){
+  var ratIcon = L.icon({
+    iconUrl: 'http://joshuafrazier.info/images/firefox.svg',
+    iconSize: [60,50]
+  });
+  L.geoJson(data,{
+    pointToLayer: function(feature,latlng){
+	  return L.marker(latlng,{icon: ratIcon});
+    }
+  }).addTo(map);
+});
+    
 
     </script>
 </body>
