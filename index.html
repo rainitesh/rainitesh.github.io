@@ -1,10 +1,14 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <title>A Leaflet map!</title>
-        <link rel="stylesheet" href="leaflet.css"/>
-        <script src="leaflet.js"></script>
-        <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="https://d3js.org/d3.v4.js"></script>
+        <title>Data Viz</title>
+
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"/>
+
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+        <script type="text/javascript" src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
         <style>
             body {
@@ -15,41 +19,99 @@
                 height: 100%;
                 width: 100%;
             }
+
+            .d3-tip {
+                line-height: 1;
+                padding: 12px;
+                background: rgba(243, 241, 241, 0.9);
+                color: #00060f;
+                border-radius: 2px;
+            }
         </style>
+
     </head>
     <body>
 
         <div id="map"></div>
 
-        <script>
-            var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-                    {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'});
-            var map = L.map('map', {center: [-37.813611, 144.963056], zoom: 14});
-            map.addLayer(layer);
+        <script type="text/javascript">
 
+            var map = L.map('map').setView([-37.813611, 144.963055], 15);
+            mapLink =
+                    '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+            L.tileLayer(
+                    'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+                        attribution: '&copy; ' + mapLink + ' Contributors',
+                        maxZoom: 18,
+                    }).addTo(map);
 
-            var svg = d3.select(map.getPanes().overlayPane).append("svg");
-            var g = svg.append("g").attr("class", "leaflet-zoom-hide");
+            // Add an SVG element to Leaflet’s overlay pane
+            var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+                    g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
+            d3.json("station.geojson", function (collection) {
 
-            d3.json("station.geojson", function (error, collection) {
-                if (error)
-                    throw error;
+                /* Add a LatLng object to each item in the dataset */
+                collection.features.forEach(function (d) {
+                    d.LatLng = new L.LatLng(d.geometry.coordinates[1],
+                            d.geometry.coordinates[0])
+                })
 
-                var transform = d3.geo.transform({point: projectPoint});
-                var path = d3.geo.path().projection(transform);
+                //Set up tooltip
+                var tip = d3.tip()
+                        .attr('class', 'd3-tip')
+                        .offset([-10, 50])
+                        .html(function (d) {
+                            return  d.properties.STATION;
+                        })
+                svg.call(tip);
 
                 var feature = g.selectAll("circle")
                         .data(collection.features)
-                        .enter().append("circle");
+                        .enter().append("circle")
+                        .style("stroke", "white")
+                        .style("stroke-width", 2)
+                        .on('mouseover', tip.show)
+                        .on('mouseout', tip.hide)
+                        .style("fill", "blue")
+                        .attr("r", 12);
+
+                map.on("viewreset", update);
+                update();
+
+                function update() {
+                    feature.attr("transform",
+                            function (d) {
+                                return "translate(" +
+                                        map.latLngToLayerPoint(d.LatLng).x + "," +
+                                        map.latLngToLayerPoint(d.LatLng).y + ")";
+                            }
+                    )
+                }
+            })
+
+            d3.json("existingLine.geojson", function (geoShape) {
+                /* Add a LatLng object to each item in the dataset */
+
+                var transform = d3.geo.transform({point: projectPoint}),
+                        path = d3.geo.path().projection(transform);
+
+                // create path elements for each of the features
+                d3_features = g.selectAll("path")
+                        .data(geoShape.features)
+                        .enter().append("path");
 
                 map.on("viewreset", reset);
+
                 reset();
 
-                // Reposition the SVG to cover the features.
+                // fit the SVG element to leaflet's map layer
                 function reset() {
-                    var bounds = path.bounds(collection),
-                            topLeft = bounds[0],
+
+                    bounds = path.bounds(geoShape);
+                    console.log(bounds[0]);
+
+                    var topLeft = bounds[0],
                             bottomRight = bounds[1];
 
                     svg.attr("width", bottomRight[0] - topLeft[0])
@@ -57,9 +119,13 @@
                             .style("left", topLeft[0] + "px")
                             .style("top", topLeft[1] + "px");
 
-                    g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+                    g.attr("transform", "translate(" + -topLeft[0] + ","
+                            + -topLeft[1] + ")");
 
-                    feature.attr("d", path);
+                    // initialize the path data 
+                    d3_features.attr("d", path)
+                            .style("fill-opacity", 0.7)
+                            .attr('fill', 'red');
                 }
 
                 // Use Leaflet to implement a D3 geometric transformation.
@@ -68,8 +134,9 @@
                     this.stream.point(point.x, point.y);
                 }
 
-                // code here
-            });
+            })
+
+
         </script>
     </body>
 </html>
