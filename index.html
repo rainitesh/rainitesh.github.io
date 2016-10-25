@@ -3,8 +3,10 @@
         <title>A Leaflet map!</title>
         <link rel="stylesheet" href="leaflet.css"/>
         <script src="leaflet.js"></script>
-        <!-- Jquery min -->
         <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+
         <style>
             body {
                 padding: 0;
@@ -23,38 +25,51 @@
         <script>
             var layer = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
                     {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'});
-            var map = L.map('map', {scrollWheelZoom: false, center: [-37.813611, 144.963056], zoom: 14});
+            var map = L.map('map', {center: [-37.813611, 144.963056], zoom: 14});
             map.addLayer(layer);
 
-            // load GeoJSON from an external file
-            $.getJSON("station.geojson", function (data) {
-                var ratIcon = L.icon({
-                    iconUrl: 'http://joshuafrazier.info/images/firefox.svg',
-                    iconSize: [60, 50]
-                });
 
-                L.geoJson(data, {
-                    pointToLayer: function (feature, latlng) {
-                        return L.circleMarker(latlng, {
-                            clickable: false
-                        });
-                    },
-                    style: MelMetroRail_ExistingStations_Style
-                }).addTo(map);
-            });
+            var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+                    g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-            function MelMetroRail_ExistingStations_Style(feature) {
-                return {
-                    weight: 2,
-                    radius: 6,
-                    opacity: 1,
-                    color: '#212121',
-                    fillColor: '#159FF5',
-                    fillOpacity: 1
+            d3.json("station.geojson", function (error, collection) {
+                if (error)
+                    throw error;
+
+                var transform = d3.geo.transform({point: projectPoint}),
+                        path = d3.geo.path().projection(transform);
+
+                var feature = g.selectAll("path")
+                        .data(collection.features)
+                        .enter().append("path");
+
+                map.on("viewreset", reset);
+                reset();
+
+                // Reposition the SVG to cover the features.
+                function reset() {
+                    var bounds = path.bounds(collection),
+                            topLeft = bounds[0],
+                            bottomRight = bounds[1];
+
+                    svg.attr("width", bottomRight[0] - topLeft[0])
+                            .attr("height", bottomRight[1] - topLeft[1])
+                            .style("left", topLeft[0] + "px")
+                            .style("top", topLeft[1] + "px");
+
+                    g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+                    feature.attr("d", path);
                 }
-            }
 
+                // Use Leaflet to implement a D3 geometric transformation.
+                function projectPoint(x, y) {
+                    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+                    this.stream.point(point.x, point.y);
+                }
 
+                // code here
+            });
         </script>
     </body>
 </html>
