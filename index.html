@@ -4,7 +4,7 @@
         <link rel="stylesheet" href="leaflet.css"/>
         <script src="leaflet.js"></script>
         <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="https://d3js.org/d3.v4.js"></script>
 
         <style>
             body {
@@ -28,19 +28,20 @@
             map.addLayer(layer);
 
 
-            var svg = d3.select(map.getPanes().overlayPane).append("svg"),
-                    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+            var svg = d3.select(map.getPanes().overlayPane).append("svg");
+            var g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
 
             d3.json("station.geojson", function (error, collection) {
                 if (error)
                     throw error;
 
-                var transform = d3.geo.transform({point: projectPoint}),
-                        path = d3.geo.path().projection(transform);
+                var transform = d3.geo.transform({point: projectPoint});
+                var path = d3.geo.path().projection(transform);
 
-                var feature = g.selectAll("path")
+                var feature = g.selectAll("circle")
                         .data(collection.features)
-                        .enter().append("path");
+                        .enter().append("circle");
 
                 map.on("viewreset", reset);
                 reset();
