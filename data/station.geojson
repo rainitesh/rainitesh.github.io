@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+                                                                                
+"features": [
+{ "type": "Feature", "properties": { "MET_STOPID": "19842", "STATION": "Melbourne Central", "STATIONTYP": "Premium", "ZONES": "1", "STOPMODE": "Train" }, "geometry": { "type": "Point", "coordinates": [ 144.96259899999399, -37.809935999993833 ] } },
+{ "type": "Feature", "properties": { "MET_STOPID": "19843", "STATION": "Parliament", "STATIONTYP": "Premium", "ZONES": "1", "STOPMODE": "Train" }, "geometry": { "type": "Point", "coordinates": [ 144.97290699999417, -37.811054999993985 ] } },
+{ "type": "Feature", "properties": { "MET_STOPID": "22180", "STATION": "Southern Cross", "STATIONTYP": "Premium", "ZONES": "1", "STOPMODE": "Train" }, "geometry": { "type": "Point", "coordinates": [ 144.95140899999384, -37.81793299999368 ] } },
+{ "type": "Feature", "properties": { "MET_STOPID": "19854", "STATION": "Flinders Street", "STATIONTYP": "Premium", "ZONES": "1", "STOPMODE": "Train" }, "geometry": { "type": "Point", "coordinates": [ 144.96696699999404, -37.818307999993891 ] } },
+{ "type": "Feature", "properties": { "MET_STOPID": "22238", "STATION": "Flinders Street", "STATIONTYP": null, "ZONES": "1,Reg", "STOPMODE": "V\/Line Train" }, "geometry": { "type": "Point", "coordinates": [ 144.96696799999407, -37.818308999993896 ] } },
+{ "type": "Feature", "properties": { "MET_STOPID": "19841", "STATION": "Flagstaff", "STATIONTYP": "Premium", "ZONES": "1", "STOPMODE": "Train" }, "geometry": { "type": "Point", "coordinates": [ 144.9556529999939, -37.811977999993779 ] } }
+]
+}
