@@ -12,16 +12,20 @@ L.tileLayer(
 var transform = d3.geo.transform({point: projectPoint}),
         path = d3.geo.path().projection(transform);
 
-//melMetro geojson file
-d3.json("data/melMetroLine.geojson", function (geoMelMetroShape) {
+
+
+//Cityloop geojson file      
+d3.json("data/cityloop.geojson", function (geoShape) {
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
     // create path elements for each of the features
-    metrofeatures = g.selectAll("path")
-            .data(geoMelMetroShape.features)
+    d3_features = g.selectAll("path")
+            .data(geoShape.features)
             .enter().append("path");
+
+
 
     map.on("viewreset", reset);
 
@@ -30,7 +34,7 @@ d3.json("data/melMetroLine.geojson", function (geoMelMetroShape) {
     // fit the SVG element to leaflet's map layer
     function reset() {
 
-        bounds = path.bounds(geoMelMetroShape);
+        bounds = path.bounds(geoShape);
 
         var topLeft = bounds[0],
                 bottomRight = bounds[1];
@@ -43,23 +47,25 @@ d3.json("data/melMetroLine.geojson", function (geoMelMetroShape) {
         g.attr("transform", "translate(" + -topLeft[0] + ","
                 + -topLeft[1] + ")");
 
-        // initialize the path data 
-        metrofeatures.attr("d", path)
-                .style("stroke", "yellow")
+    // initialize the path data 
+        d3_features.attr("d", path)
+                .style("stroke", "green")
                 .style("stroke-width", 3)
                 .style("fill-opacity", 0);
     }
+
 })
 
-//Cityloop geojson file      
-d3.json("data/cityloop.geojson", function (geoShape) {
+
+//melMetro geojson file
+d3.json("data/melMetroLine.geojson", function (geoMelMetroShape) {
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
             g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
     // create path elements for each of the features
-    d3_features = g.selectAll("path")
-            .data(geoShape.features)
+    metrofeatures = g.selectAll("path")
+            .data(geoMelMetroShape.features)
             .enter().append("path");
 
     //station geojson
@@ -77,8 +83,10 @@ d3.json("data/cityloop.geojson", function (geoShape) {
                 .attr('class', 'd3-tip')
                 .offset([-10, 50])
                 .html(function (d) {
+                    console.log(d.properties.STATION);
                     return  d.properties.STATION;
                 })
+
         svg.call(tip);
 
         var feature = g.selectAll("circle")
@@ -122,7 +130,7 @@ d3.json("data/cityloop.geojson", function (geoShape) {
     // fit the SVG element to leaflet's map layer
     function reset() {
 
-        bounds = path.bounds(geoShape);
+        bounds = path.bounds(geoMelMetroShape);
 
         var topLeft = bounds[0],
                 bottomRight = bounds[1];
@@ -135,13 +143,12 @@ d3.json("data/cityloop.geojson", function (geoShape) {
         g.attr("transform", "translate(" + -topLeft[0] + ","
                 + -topLeft[1] + ")");
 
-    // initialize the path data 
-        d3_features.attr("d", path)
-                .style("stroke", "green")
+        // initialize the path data 
+        metrofeatures.attr("d", path)
+                .style("stroke", "yellow")
                 .style("stroke-width", 3)
                 .style("fill-opacity", 0);
     }
-
 })
 
 // Use Leaflet to implement a D3 geometric transformation.
