@@ -7,16 +7,20 @@ var map = L.map('map').setView([-37.813611, 144.963055], 15);
                         maxZoom: 18,
                     }).addTo(map);
 
+            
+
             var svg = d3.select(map.getPanes().overlayPane).append("svg"),
                     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
+            /* Add a LatLng object to each item in the dataset */
+            var transform = d3.geo.transform({point: projectPoint}),
+                        path = d3.geo.path().projection(transform);
 
             //Cityloop geojson file      
             d3.json("data/cityloop.geojson", function (geoShape) {
-                /* Add a LatLng object to each item in the dataset */
 
-                var transform = d3.geo.transform({point: projectPoint}),
-                        path = d3.geo.path().projection(transform);
+                var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+                    g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
                 // create path elements for each of the features
                 d3_features = g.selectAll("path")
@@ -50,23 +54,16 @@ var map = L.map('map').setView([-37.813611, 144.963055], 15);
                             .style("fill-opacity", 0);
                 }
 
-                // Use Leaflet to implement a D3 geometric transformation.
-                function projectPoint(x, y) {
-                    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-                    this.stream.point(point.x, point.y);
-                }
-
             })
 
             //melMetro geojson file
             d3.json("data/melMetroLine.geojson", function (geoMelMetroShape) {
-                /* Add a LatLng object to each item in the dataset */
 
-                var transform = d3.geo.transform({point: projectPoint}),
-                        path = d3.geo.path().projection(transform);
+                var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+                    g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
                 // create path elements for each of the features
-                d3_features = g.selectAll("path")
+                metrofeatures = g.selectAll("path")
                         .data(geoMelMetroShape.features)
                         .enter().append("path");
 
@@ -91,23 +88,19 @@ var map = L.map('map').setView([-37.813611, 144.963055], 15);
                             + -topLeft[1] + ")");
 
                     // initialize the path data 
-                    d3_features.attr("d", path)
+                    metrofeatures.attr("d", path)
                             .style("stroke", "yellow")
                             .style("stroke-width", 3)
                             .style("fill-opacity", 0);
                 }
-
-                // Use Leaflet to implement a D3 geometric transformation.
-                function projectPoint(x, y) {
-                    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-                    this.stream.point(point.x, point.y);
-                }
-
             })
-
 
             //Existing stations geojson
             d3.json("data/station.geojson", function (collection) {
+
+                var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+                    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+  
 
                 /* Add a LatLng object to each item in the dataset */
                 collection.features.forEach(function (d) {
@@ -139,6 +132,19 @@ var map = L.map('map').setView([-37.813611, 144.963055], 15);
 
                 function update() {
 
+                    bounds = path.bounds(collection);
+
+                    var topLeft = bounds[0],
+                            bottomRight = bounds[1];
+
+                    svg.attr("width", bottomRight[0] - topLeft[0])
+                            .attr("height", bottomRight[1] - topLeft[1])
+                            .style("left", topLeft[0] + "px")
+                            .style("top", topLeft[1] + "px");
+
+                    g.attr("transform", "translate(" + -topLeft[0] + ","
+                            + -topLeft[1] + ")");
+
                     feature.attr("transform",
                             function (d) {
                                 return "translate(" +
@@ -157,3 +163,9 @@ var map = L.map('map').setView([-37.813611, 144.963055], 15);
                     })
                 }
             })
+
+            // Use Leaflet to implement a D3 geometric transformation.
+                function projectPoint(x, y) {
+                    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+                    this.stream.point(point.x, point.y);
+                }
